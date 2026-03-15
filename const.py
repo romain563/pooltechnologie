@@ -13,7 +13,6 @@ CONF_REGULATION_ORP = "regulation_orp"
 SENSORS = {
     "pH": {
         "name": "pH",
-        "translation_key": "pH",
         "unique_id": "pH",
         "address": 259,
         "scale": 0.001,
@@ -23,7 +22,6 @@ SENSORS = {
     },
     "temperature_eau": {
         "name": "Température de l'eau",
-        "translation_key": "temperature_eau",
         "unique_id": "temperature_eau",
         "address": 260,
         "unit": "°C",
@@ -34,7 +32,6 @@ SENSORS = {
     },
     "orp": {
         "name": "ORP",
-        "translation_key": "orp",
         "unique_id": "orp",
         "address": 262,
         "unit": "mV",
@@ -44,7 +41,6 @@ SENSORS = {
     },
     "taux_sel": {
         "name": "Salinité",
-        "translation_key": "taux_sel",
         "unique_id": "taux_sel",
         "address": 261,
         "unit": "g/L",
@@ -57,7 +53,6 @@ SENSORS = {
 CONFIG_ENTITIES = {
     "consigne_ph": {
         "name": "Consigne pH",
-        "translation_key": "consigne_ph",
         "unique_id": "consigne_ph",
         "address": 4207,
         "scale": 0.000390625,
@@ -70,13 +65,11 @@ CONFIG_ENTITIES = {
     },
     "regulation_ph_auto": {
         "name": "Régulation pH automatique",
-        "translation_key": "regulation_pH_auto",
         "unique_id": "regulation_pH_auto",
         "address": 4200,
     },
     "taille_bassin": {
         "name": "Volume du bassin",
-        "translation_key": "taille_bassin",
         "unique_id": "taille_bassin",
         "address": 4111,
         "unit": "m³",
@@ -87,7 +80,6 @@ CONFIG_ENTITIES = {
     },
     "consigne_orp": {
         "name": "Consigne ORP",
-        "translation_key": "consigne_orp",
         "unique_id": "consigne_orp",
         "address": 4235,
         "unit": "mV",
@@ -100,7 +92,6 @@ CONFIG_ENTITIES = {
     },
     "consigne_electrolyse": {
         "name": "Consigne électrolyse",
-        "translation_key": "consigne_electrolyse",
         "unique_id": "consigne_electrolyse",
         "address": 4168,
         "unit": "%",
@@ -113,7 +104,6 @@ CONFIG_ENTITIES = {
     },
     "concentration_correcteur_ph": {
         "name": "Concentration correcteur de pH",
-        "translation_key": "concentration_correcteur_ph",
         "unique_id": "concentration_correcteur_ph",
         "address": 4208,
         "unit": "%",

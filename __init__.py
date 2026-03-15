@@ -6,11 +6,17 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN, PLATFORMS, DEFAULT_SCAN_INTERVAL, SENSORS, CONFIG_ENTITIES
+from .const import (
+    DOMAIN, PLATFORMS, DEFAULT_SCAN_INTERVAL,
+    SENSORS, CONFIG_ENTITIES, CONF_REGULATION_ORP,
+)
 from .modbus import PoolTechnologieModbusClient
 import logging
 
 _LOGGER = logging.getLogger(__name__)
+
+# Clés CONFIG_ENTITIES à lire uniquement si régulation ORP activée
+_CONFIG_KEYS_ORP = {"consigne_orp"}
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -28,8 +34,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     coordinator = PoolTechnologieDataUpdateCoordinator(hass, modbus_client, entry)
 
-    # CORRECTIF : si le premier refresh échoue (UpdateFailed), on convertit en
-    # ConfigEntryNotReady pour que HA retente automatiquement au lieu de bloquer
     try:
         await coordinator.async_config_entry_first_refresh()
     except ConfigEntryNotReady:
@@ -44,7 +48,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    # Recharger l'intégration automatiquement quand les options changent
+    # (ex: activation/désactivation de la régulation ORP)
+    entry.async_on_unload(
+        entry.add_update_listener(_async_update_listener)
+    )
+
     return True
+
+
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Appelé par HA quand les options de l'entrée sont modifiées."""
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -76,6 +91,12 @@ class PoolTechnologieDataUpdateCoordinator(DataUpdateCoordinator):
         """Récupère les données depuis l'appareil Modbus."""
         try:
             data = {}
+            # Lire l'option depuis entry.options en priorité (modifiable après install),
+            # avec fallback sur entry.data (valeur saisie à la configuration initiale)
+            regulation_orp = self.entry.options.get(
+                CONF_REGULATION_ORP,
+                self.entry.data.get(CONF_REGULATION_ORP, False)
+            )
 
             for sensor_key, sensor_config in SENSORS.items():
                 value = await self.hass.async_add_executor_job(
@@ -85,6 +106,9 @@ class PoolTechnologieDataUpdateCoordinator(DataUpdateCoordinator):
                     data[sensor_key] = value * sensor_config["scale"]
 
             for config_key, config_config in CONFIG_ENTITIES.items():
+                # Ne pas lire les registres ORP si l'option est désactivée
+                if config_key in _CONFIG_KEYS_ORP and not regulation_orp:
+                    continue
                 value = await self.hass.async_add_executor_job(
                     self.modbus_client.read_register, config_config["address"]
                 )

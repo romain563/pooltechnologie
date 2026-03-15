@@ -1,25 +1,34 @@
 """Plateforme de nombres pour PoolTechnologie."""
 from homeassistant.components.number import NumberEntity
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from .const import DOMAIN, CONFIG_ENTITIES
+from .const import DOMAIN, CONFIG_ENTITIES, CONF_REGULATION_ORP
 
-_NUMBER_KEYS = {
+# Entités toujours présentes
+_NUMBER_KEYS_BASE = {
     "consigne_ph",
-    "consigne_orp",
     "consigne_electrolyse",
     "concentration_correcteur_ph",
     "taille_bassin",
+}
+
+# Entités conditionnelles — uniquement si régulation ORP activée
+_NUMBER_KEYS_ORP = {
+    "consigne_orp",
 }
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Configure les nombres PoolTechnologie."""
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
+
+    regulation_orp = entry.options.get(CONF_REGULATION_ORP, entry.data.get(CONF_REGULATION_ORP, False))
+    active_keys = _NUMBER_KEYS_BASE | (_NUMBER_KEYS_ORP if regulation_orp else set())
+
     numbers = [
         PoolTechnologieNumber(coordinator, entry, config_key, config_config)
         for config_key, config_config in CONFIG_ENTITIES.items()
-        if config_key in _NUMBER_KEYS
+        if config_key in active_keys
     ]
     async_add_entities(numbers, True)
 

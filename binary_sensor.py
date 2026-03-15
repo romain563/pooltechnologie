@@ -1,6 +1,6 @@
 """Plateforme de capteurs binaires pour PoolTechnologie."""
 from homeassistant.components.binary_sensor import BinarySensorEntity
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN
 
@@ -21,6 +21,7 @@ class PoolTechnologieConnectionSensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_name = f"{entry.data['name']} Connexion Modbus"
         self._attr_unique_id = f"{entry.entry_id}_connection"
         self._attr_icon = "mdi:lan-connect"
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=entry.data["name"],
@@ -29,10 +30,10 @@ class PoolTechnologieConnectionSensor(CoordinatorEntity, BinarySensorEntity):
 
     @property
     def available(self) -> bool:
-        """Retourne True si l'entité est disponible."""
-        return True
+        """Indisponible si le coordinateur n'arrive plus à joindre l'appareil."""
+        return self.coordinator.last_update_success
 
     @property
     def is_on(self) -> bool:
-        """Retourne True si l'appareil est connecté."""
+        """Retourne True si la connexion Modbus est active."""
         return self.coordinator.last_update_success
