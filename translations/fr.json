@@ -1,0 +1,41 @@
+{
+  "title": "PoolTechnologie",
+  "config": {
+    "name": "Nom de l'appareil",
+    "ip": "Adresse IP de la passerelle Modbus",
+    "port": "Port Modbus",
+    "unit_id": "ID de l'unité Modbus",
+    "scan_interval": "Intervalle de rafraîchissement (secondes)",
+    "regulation_orp": "Activer la régulation ORP"
+  },
+  "pH": {
+    "name": "pH"
+  },
+  "temperature_eau": {
+    "name": "Température de l'eau"
+  },
+  "orp": {
+    "name": "ORP"
+  },
+  "taux_sel": {
+    "name": "Salinité"
+  },
+  "consigne_ph": {
+    "name": "Consigne pH"
+  },
+  "regulation_pH": {
+    "name": "Régulation pH"
+  },
+  "taille_bassin": {
+    "name": "Volume du bassin"
+  },
+  "consigne_orp": {
+    "name": "Consigne ORP"
+  },
+  "consigne_electrolyse": {
+    "name": "Consigne électrolyse"
+  },
+  "concentration_correcteur_ph": {
+    "name": "Concentration correcteur de pH"
+  }
+}

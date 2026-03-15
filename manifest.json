@@ -1,0 +1,11 @@
+{
+  "domain": "pooltechnologie",
+  "name": "PoolTechnologie",
+  "documentation": "https://github.com/Romain563/pooltechnologie",
+  "issue_tracker": "https://github.com/Romain563/pooltechnologie/issues",
+  "dependencies": [ "modbus" ],
+  "codeowners": [ "@Romain563" ],
+  "requirements": [ "pymodbus<=3.9.2" ],
+  "iot_class": "local_polling",
+  "version": "0.1.0"
+}
