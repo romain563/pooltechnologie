@@ -48,6 +48,16 @@ SENSORS = {
         "precision": 1,
         "icon": "mdi:shaker-outline",
     },
+    "tension_cellule": {
+        "name": "Tension cellule",
+        "unique_id": "tension_cellule",
+        "address": 1061,
+        "unit": "mV",
+        "scale": 1,
+        "precision": 0,
+        "icon": "mdi:sine-wave",
+        "entity_category": "diagnostic",
+    },
 }
  
 CONFIG_ENTITIES = {

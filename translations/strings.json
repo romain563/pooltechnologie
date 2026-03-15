@@ -30,7 +30,8 @@
       "pH": { "name": "pH" },
       "temperature_eau": { "name": "Température de l'eau" },
       "orp": { "name": "ORP" },
-      "taux_sel": { "name": "Salinité" }
+      "taux_sel": { "name": "Salinité" },
+      "tension_cellule": { "name": "Tension de la cellule" }
     },
     "number": {
       "consigne_ph": { "name": "Consigne pH" },

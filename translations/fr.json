@@ -27,23 +27,48 @@
   },
   "entity": {
     "sensor": {
-      "pH": { "name": "pH" },
-      "temperature_eau": { "name": "Température de l'eau" },
-      "orp": { "name": "ORP" },
-      "taux_sel": { "name": "Salinité" }
+      "pH": {
+        "name": "pH"
+      },
+      "temperature_eau": {
+        "name": "Température de l'eau"
+      },
+      "orp": {
+        "name": "ORP"
+      },
+      "taux_sel": {
+        "name": "Salinité"
+      },
+      "tension_cellule": {
+        "name": "Tension de la cellule"
+      }
     },
     "number": {
-      "consigne_ph": { "name": "Consigne pH" },
-      "taille_bassin": { "name": "Volume du bassin" },
-      "consigne_orp": { "name": "Consigne ORP" },
-      "consigne_electrolyse": { "name": "Consigne électrolyse" },
-      "concentration_correcteur_ph": { "name": "Concentration correcteur de pH" }
+      "consigne_ph": {
+        "name": "Consigne pH"
+      },
+      "taille_bassin": {
+        "name": "Volume du bassin"
+      },
+      "consigne_orp": {
+        "name": "Consigne ORP"
+      },
+      "consigne_electrolyse": {
+        "name": "Consigne électrolyse"
+      },
+      "concentration_correcteur_ph": {
+        "name": "Concentration correcteur de pH"
+      }
     },
     "switch": {
-      "regulation_ph_auto": { "name": "Régulation pH automatique" }
+      "regulation_ph_auto": {
+        "name": "Régulation pH automatique"
+      }
     },
     "binary_sensor": {
-      "connection": { "name": "Connexion Modbus" }
+      "connection": {
+        "name": "Connexion Modbus"
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 """Plateforme de capteurs pour PoolTechnologie."""
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity import DeviceInfo, EntityCategory
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, SENSORS
 
@@ -26,10 +26,14 @@ class PoolTechnologieSensor(CoordinatorEntity, SensorEntity):
         self.sensor_config = sensor_config
         self._attr_name = f"{entry.data['name']} {sensor_config['name']}"
         self._attr_unique_id = f"{entry.entry_id}_{sensor_config['unique_id']}"
-        self._attr_icon = sensor_config["icon"]
+        self._attr_icon = sensor_config.get("icon")
         self._attr_device_class = sensor_config.get("device_class")
         self._attr_native_unit_of_measurement = sensor_config.get("unit")
         self._attr_state_class = SensorStateClass.MEASUREMENT
+        # Applique entity_category si défini dans const.py (ex: "diagnostic")
+        entity_category = sensor_config.get("entity_category")
+        if entity_category == "diagnostic":
+            self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=entry.data["name"],
