@@ -1,5 +1,6 @@
 """Plateforme d'interrupteurs pour PoolTechnologie."""
 from homeassistant.components.switch import SwitchEntity
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, CONFIG_ENTITIES
 
@@ -9,10 +10,10 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
     switches = []
 
-    if "regulation_ph" in CONFIG_ENTITIES:
+    if "regulation_ph_auto" in CONFIG_ENTITIES:
         switches.append(
             PoolTechnologieSwitch(
-                coordinator, entry, "regulation_ph", CONFIG_ENTITIES["regulation_ph"]
+                coordinator, entry, "regulation_ph_auto", CONFIG_ENTITIES["regulation_ph_auto"]
             )
         )
 
@@ -31,6 +32,11 @@ class PoolTechnologieSwitch(CoordinatorEntity, SwitchEntity):
         self._attr_name = f"{entry.data['name']} {config_config['name']}"
         self._attr_unique_id = f"{entry.entry_id}_{config_config['unique_id']}"
         self._attr_icon = "mdi:toggle-switch"
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name=entry.data["name"],
+            manufacturer="Pool Technologie",
+        )
 
     @property
     def available(self) -> bool:
@@ -46,7 +52,6 @@ class PoolTechnologieSwitch(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs) -> None:
         """Active l'interrupteur."""
-        # CORRECTIF : write_register est synchrone → executor
         await self.hass.async_add_executor_job(
             self.coordinator.modbus_client.write_register,
             self.config_config["address"],
@@ -56,7 +61,6 @@ class PoolTechnologieSwitch(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs) -> None:
         """Désactive l'interrupteur."""
-        # CORRECTIF : write_register est synchrone → executor
         await self.hass.async_add_executor_job(
             self.coordinator.modbus_client.write_register,
             self.config_config["address"],

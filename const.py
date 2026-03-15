@@ -68,10 +68,10 @@ CONFIG_ENTITIES = {
         "max": 7.6,
         "step": 0.1,
     },
-    "regulation_ph": {
-        "name": "Régulation pH",
-        "translation_key": "regulation_pH",
-        "unique_id": "regulation_pH",
+    "regulation_ph_auto": {
+        "name": "Régulation pH automatique",
+        "translation_key": "regulation_pH_auto",
+        "unique_id": "regulation_pH_auto",
         "address": 4200,
     },
     "taille_bassin": {

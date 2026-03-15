@@ -1,9 +1,9 @@
 """Plateforme de nombres pour PoolTechnologie."""
 from homeassistant.components.number import NumberEntity
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, CONFIG_ENTITIES
 
-# Clés exposées en tant qu'entités Number (réglages modifiables)
 _NUMBER_KEYS = {
     "consigne_ph",
     "consigne_orp",
@@ -35,12 +35,16 @@ class PoolTechnologieNumber(CoordinatorEntity, NumberEntity):
         self.config_config = config_config
         self._attr_name = f"{entry.data['name']} {config_config['name']}"
         self._attr_unique_id = f"{entry.entry_id}_{config_config['unique_id']}"
-        # CORRECTIF : .get() avec fallback — évite KeyError si "icon" absent dans const
         self._attr_icon = config_config.get("icon", "mdi:cog")
         self._attr_native_unit_of_measurement = config_config.get("unit")
         self._attr_native_min_value = config_config.get("min", 0)
         self._attr_native_max_value = config_config.get("max", 1000)
         self._attr_native_step = config_config.get("step", 1)
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name=entry.data["name"],
+            manufacturer="Pool Technologie",
+        )
 
     @property
     def available(self) -> bool:
@@ -52,7 +56,6 @@ class PoolTechnologieNumber(CoordinatorEntity, NumberEntity):
         """Retourne l'état du nombre."""
         if self.coordinator.data is None:
             return None
-        # CORRECTIF : guard explicite avant round() — évite TypeError si la clé est absente
         value = self.coordinator.data.get(self.config_key)
         if value is None:
             return None
@@ -61,7 +64,6 @@ class PoolTechnologieNumber(CoordinatorEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Définit la valeur du nombre."""
         scaled_value = int(value / self.config_config.get("scale", 1))
-        # CORRECTIF : write_register est synchrone → executor
         await self.hass.async_add_executor_job(
             self.coordinator.modbus_client.write_register,
             self.config_config["address"],

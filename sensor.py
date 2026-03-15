@@ -1,5 +1,6 @@
 """Plateforme de capteurs pour PoolTechnologie."""
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import DOMAIN, SENSORS
 
@@ -28,8 +29,12 @@ class PoolTechnologieSensor(CoordinatorEntity, SensorEntity):
         self._attr_icon = sensor_config["icon"]
         self._attr_device_class = sensor_config.get("device_class")
         self._attr_native_unit_of_measurement = sensor_config.get("unit")
-        # CORRECTIF : active l'historique long terme dans HA (statistiques, graphiques)
         self._attr_state_class = SensorStateClass.MEASUREMENT
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name=entry.data["name"],
+            manufacturer="Pool Technologie",
+        )
 
     @property
     def available(self) -> bool:
@@ -41,7 +46,6 @@ class PoolTechnologieSensor(CoordinatorEntity, SensorEntity):
         """Retourne l'état du capteur."""
         if self.coordinator.data is None:
             return None
-        # CORRECTIF : guard explicite avant round() — évite TypeError si la clé est absente
         value = self.coordinator.data.get(self.sensor_key)
         if value is None:
             return None

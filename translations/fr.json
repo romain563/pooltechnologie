@@ -23,8 +23,8 @@
   "consigne_ph": {
     "name": "Consigne pH"
   },
-  "regulation_pH": {
-    "name": "Régulation pH"
+  "regulation_pH_auto": {
+    "name": "Régulation pH automatique"
   },
   "taille_bassin": {
     "name": "Volume du bassin"
