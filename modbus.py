@@ -22,9 +22,11 @@ class PoolTechnologieModbusClient:
     def read_register(self, address, count=1):
         """Lit un registre depuis l'appareil Modbus."""
         try:
-            # CORRECTIF : le paramètre s'appelait "slave" en pymodbus 2.x,
-            # il a été renommé "unit_id" à partir de pymodbus 3.0
-            response = self.client.read_holding_registers(address, count, unit_id=self.unit_id)
+            # Historique du paramètre selon la version pymodbus :
+            # 2.x       → slave=
+            # 3.0-3.10  → unit_id=
+            # 3.11+     → device_id=
+            response = self.client.read_holding_registers(address, count, device_id=self.unit_id)
             if response.isError():
                 raise ModbusException(str(response))
             return response.registers[0]
@@ -35,8 +37,8 @@ class PoolTechnologieModbusClient:
     def write_register(self, address, value):
         """Écrit une valeur dans un registre de l'appareil Modbus."""
         try:
-            # CORRECTIF : idem, "slave" → "unit_id"
-            response = self.client.write_register(address, value, unit_id=self.unit_id)
+            # Idem : device_id= requis depuis pymodbus 3.11
+            response = self.client.write_register(address, value, device_id=self.unit_id)
             if response.isError():
                 raise ModbusException(str(response))
             return True
