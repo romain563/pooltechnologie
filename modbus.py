@@ -10,7 +10,7 @@ class PoolTechnologieModbusClient:
 
     def __init__(self, host, port, unit_id):
         """Initialise le client Modbus."""
-        self.client = ModbusTcpClient(host, port=port)
+        self.client = ModbusTcpClient(host, port=port, timeout=3)
         self.unit_id = unit_id
 
     def connect(self):
