@@ -3,7 +3,7 @@
   "name": "PoolTechnologie",
   "documentation": "https://github.com/Romain563/pooltechnologie",
   "issue_tracker": "https://github.com/Romain563/pooltechnologie/issues",
-  "dependencies": [ "modbus" ],
+  "config_flow": true,
   "codeowners": [ "@Romain563" ],
   "requirements": [ "pymodbus<=3.9.2" ],
   "iot_class": "local_polling",

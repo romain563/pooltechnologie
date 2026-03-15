@@ -53,7 +53,7 @@ SENSORS = {
         "icon": "mdi:shaker-outline",
     },
 }
-
+ 
 CONFIG_ENTITIES = {
     "consigne_ph": {
         "name": "Consigne pH",
@@ -75,7 +75,7 @@ CONFIG_ENTITIES = {
         "address": 4200,
     },
     "taille_bassin": {
-        "name": "Taille du bassin",
+        "name": "Volume du bassin",
         "translation_key": "taille_bassin",
         "unique_id": "taille_bassin",
         "address": 4111,
@@ -119,8 +119,7 @@ CONFIG_ENTITIES = {
         "unit": "%",
         "scale": 1,
         "precision": 1,
-        "icon": "mdi:code-brackets",
-        "device_class": "ph",
+        "icon": "mdi:flask-outline",
         "min": 5,
         "max": 50,
         "step": 1,
