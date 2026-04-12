@@ -1,8 +1,6 @@
 """Communication Modbus pour PoolTechnologie."""
 from pymodbus.client import ModbusTcpClient
-# Import stable depuis pymodbus 3.x — ne pas utiliser pymodbus.exceptions directement
 from pymodbus import ModbusException
-from pymodbus.exceptions import ConnectionException
 import logging
 
 _LOGGER = logging.getLogger(__name__)
@@ -13,9 +11,10 @@ class PoolTechnologieModbusClient:
 
     def __init__(self, host: str, port: int, unit_id: int) -> None:
         """Initialise le client Modbus."""
-        # En pymodbus 3.11+, tous les paramètres après host sont keyword-only
-        self.client = ModbusTcpClient(host, port=port)
+        self._host = host
+        self._port = port
         self.unit_id = unit_id
+        self.client = ModbusTcpClient(host, port=port)
 
     def connect(self) -> None:
         """Se connecte à l'appareil Modbus."""
@@ -23,30 +22,50 @@ class PoolTechnologieModbusClient:
             raise ConnectionError("Impossible de se connecter à l'électrolyseur PoolTechnologie.")
 
     def read_register(self, address: int, count: int = 1):
-        """Lit un registre depuis l'appareil Modbus."""
-        try:
-            # pymodbus 3.11+ : address seul est positionnel, count et device_id sont keyword-only
-            response = self.client.read_holding_registers(address, count=count, device_id=self.unit_id)
-        except ModbusException as e:
-            # Exception interne pymodbus (timeout, connexion perdue, etc.)
-            _LOGGER.error("Erreur de communication Modbus (adresse %s) : %s", address, e)
-            return None
+        """Lit un registre depuis l'appareil Modbus.
 
-        # Réponse d'erreur Modbus retournée par l'appareil (adresse invalide, etc.)
+        Retourne None si l'adresse est invalide (erreur Modbus normale).
+        Lève ConnectionError si l'appareil est injoignable (connexion perdue).
+        """
+        # Reconnexion automatique si la connexion a été fermée par pymodbus
+        if not self.client.connected:
+            _LOGGER.debug("Connexion perdue, tentative de reconnexion...")
+            if not self.client.connect():
+                raise ConnectionError("Appareil injoignable.")
+
+        try:
+            response = self.client.read_holding_registers(
+                address, count=count, device_id=self.unit_id
+            )
+        except ModbusException as e:
+            # Connexion coupée pendant la lecture → on ferme proprement
+            # et on lève ConnectionError pour que le coordinateur passe
+            # last_update_success à False
+            self.client.close()
+            raise ConnectionError(f"Connexion perdue lors de la lecture (adresse {address}) : {e}") from e
+
         if response.isError():
-            _LOGGER.error("Réponse d'erreur Modbus (adresse %s) : %s", address, response)
+            # Erreur Modbus normale (adresse invalide, etc.) → on logue en debug
+            # seulement pour ne pas polluer les logs quand l'appareil est éteint
+            _LOGGER.debug("Réponse d'erreur Modbus (adresse %s) : %s", address, response)
             return None
 
         return response.registers[0]
 
     def write_register(self, address: int, value: int) -> bool:
-        """Écrit une valeur dans un registre de l'appareil Modbus."""
+        """Écrit un registre depuis l'appareil Modbus."""
+        if not self.client.connected:
+            _LOGGER.debug("Connexion perdue, tentative de reconnexion...")
+            if not self.client.connect():
+                raise ConnectionError("Appareil injoignable.")
+
         try:
-            # pymodbus 3.11+ : address seul est positionnel, value et device_id sont keyword-only
-            response = self.client.write_register(address, value=value, device_id=self.unit_id)
+            response = self.client.write_register(
+                address, value=value, device_id=self.unit_id
+            )
         except ModbusException as e:
-            _LOGGER.error("Erreur de communication Modbus (adresse %s) : %s", address, e)
-            return False
+            self.client.close()
+            raise ConnectionError(f"Connexion perdue lors de l'écriture (adresse {address}) : {e}") from e
 
         if response.isError():
             _LOGGER.error("Réponse d'erreur Modbus (adresse %s) : %s", address, response)

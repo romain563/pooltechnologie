@@ -116,5 +116,9 @@ class PoolTechnologieDataUpdateCoordinator(DataUpdateCoordinator):
                     data[config_key] = value * config_config.get("scale", 1)
 
             return data
+        except ConnectionError as e:
+            # Perte de connexion → UpdateFailed passe last_update_success à False
+            # ce qui marque toutes les entités comme indisponibles
+            raise UpdateFailed(f"Appareil injoignable : {e}") from e
         except Exception as e:
             raise UpdateFailed(f"Erreur de mise à jour : {e}") from e

@@ -30,10 +30,11 @@ class PoolTechnologieConnectionSensor(CoordinatorEntity, BinarySensorEntity):
 
     @property
     def available(self) -> bool:
-        """Indisponible si le coordinateur n'arrive plus à joindre l'appareil."""
-        return self.coordinator.last_update_success
+        """Toujours disponible — ce capteur doit pouvoir afficher OFF
+        quand l'appareil est éteint, et non pas 'Indisponible'."""
+        return True
 
     @property
     def is_on(self) -> bool:
-        """Retourne True si la connexion Modbus est active."""
+        """Retourne True si la dernière communication Modbus a réussi."""
         return self.coordinator.last_update_success
