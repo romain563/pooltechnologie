@@ -109,3 +109,8 @@ L'électrolyseur ne répond pas aux requêtes Modbus. Vérifiez le câblage RS-4
 **Erreur `transaction_id` dans les logs**
 Certaines passerelles Modbus ne respectent pas strictement le protocole TCP. Cette erreur est généralement non bloquante.
 
+---
+
+## Licence
+
+MIT License — voir [LICENSE](LICENSE)
