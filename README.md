@@ -1,6 +1,6 @@
 # PoolTechnologie — Intégration Home Assistant
 
-Intégration personnalisée Home Assistant pour les électrolyseurs et régulateurs de piscine **Pool Technologie**, via communication **Modbus TCP**.
+Intégration personnalisée Home Assistant non officielle pour les électrolyseurs et régulateurs de piscine **Pool Technologie**, via communication **Modbus TCP**.
 
 ---
 
