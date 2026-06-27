@@ -1,11 +1,11 @@
 {
   "domain": "pooltechnologie",
   "name": "PoolTechnologie",
-  "documentation": "https://github.com/Romain563/pooltechnologie",
-  "issue_tracker": "https://github.com/Romain563/pooltechnologie/issues",
-  "config_flow": true,
   "codeowners": [ "@Romain563" ],
-  "requirements": [ "pymodbus>=3.9.2" ],
+  "config_flow": true,
+  "documentation": "https://github.com/Romain563/pooltechnologie",
   "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Romain563/pooltechnologie/issues",
+  "requirements": [ "pymodbus>=3.9.2" ],
   "version": "1.0.1"
 }
